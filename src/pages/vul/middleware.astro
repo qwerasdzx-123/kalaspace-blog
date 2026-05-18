@@ -1,0 +1,129 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+const middlewareVulns = [
+	// Weblogic
+	{name:"Weblogic CVE-2020-14882 JNDI注入RCE",sev:"critical",desc:"控制台JNDI注入绕过，无认证RCE",tags:["RCE","JNDI","未授权"]},
+	{name:"Weblogic CVE-2020-2883 远程代码执行",sev:"critical",desc:"Coherence库反序列化RCE",tags:["RCE","反序列化"]},
+	{name:"Weblogic CVE-2020-2555 Coherence RCE",sev:"critical",desc:"T3协议反序列化全版本通杀",tags:["RCE","反序列化","T3"]},
+	{name:"Weblogic CVE-2018-2628 T3反序列化",sev:"critical",desc:"T3协议反序列化，JRMPClient利用",tags:["RCE","反序列化"]},
+	{name:"Weblogic CVE-2017-10271 XMLDecoder反序列化",sev:"critical",desc:"SOAP请求XMLDecoder反序列化",tags:["RCE","XMLDecoder"]},
+	{name:"Weblogic CVE-2017-3506 XMLDecoder反序列化",sev:"critical",desc:"wls-wsat XMLDecoder XXE→RCE",tags:["RCE","XXE"]},
+	{name:"Weblogic CVE-2019-2890 反序列化",sev:"high",desc:"T3协议反序列化RCE",tags:["RCE","反序列化"]},
+	{name:"Weblogic CVE-2020-14645 UniversalExtractor",sev:"high",desc:"反序列化 gadget 利用",tags:["RCE","反序列化"]},
+	{name:"Weblogic CVE-2018-2893 任意文件上传",sev:"high",desc:"测试页面未授权上传webshell",tags:["Getshell","文件上传"]},
+	{name:"Weblogic CVE-2019-2615/2618 任意文件读取",sev:"high",desc:"文件读取接口泄露敏感文件",tags:["任意文件读取"]},
+	{name:"Weblogic CNVD-C-2019-48814 反序列化",sev:"critical",desc:"wls9_async反序列化RCE",tags:["RCE","反序列化"]},
+	// Struts2
+	{name:"Struts2 S2-045 RCE (CVE-2017-5638)",sev:"critical",desc:"Jakarta Multipart解析器OGNL注入",tags:["RCE","OGNL注入"]},
+	{name:"Struts2 S2-057 远程代码执行 (CVE-2018-11776)",sev:"critical",desc:"URL标签未校验导致OGNL注入",tags:["RCE","OGNL"]},
+	{name:"Struts2 S2-032 远程代码执行",sev:"critical",desc:"method参数OGNL注入RCE",tags:["RCE","OGNL注入"]},
+	{name:"Struts2 S2-061 远程代码执行",sev:"critical",desc:"S2-045绕过，OGNL注入",tags:["RCE","OGNL"]},
+	{name:"Struts2 S2-048 命令执行 (CVE-2017-9791)",sev:"high",desc:"Struts2 Showcase漏洞",tags:["命令执行"]},
+	{name:"Struts2 S2-059 远程代码执行",sev:"high",desc:"标签属性OGNL注入",tags:["RCE","OGNL注入"]},
+	// Shiro
+	{name:"Apache Shiro 权限绕过 (CVE-2020-13933)",sev:"high",desc:"CVE-2020-11989绕过，绕过Shiro认证",tags:["权限绕过","认证绕过"]},
+	{name:"Apache Shiro 1.2.4 反序列化RCE (CVE-2016-4437)",sev:"critical",desc:"RememberMe AES加密密钥默认导致RCE",tags:["RCE","反序列化"]},
+	// Apache
+	{name:"Apache Tomcat AJP文件包含 (CVE-2020-1938)",sev:"critical",desc:"Ghostcat幽灵猫，任意文件读取+包含",tags:["文件包含","任意文件读取"]},
+	{name:"Apache Tomcat 拒绝服务 (CVE-2020-13935)",sev:"medium",desc:"HTTP/2拒绝服务",tags:["DoS"]},
+	{name:"Apache Httpd 换行解析漏洞",sev:"high",desc:"文件名解析绕过，上传webshell",tags:["文件上传","解析漏洞"]},
+	{name:"Apache Shiro 路径遍历 (CVE-2021-42013)",sev:"high",desc:"mod_proxy路径遍历RCE",tags:["路径遍历","RCE"]},
+	{name:"Apache Flink 任意文件读取 (CVE-2020-17519)",sev:"high",desc:"JobManager REST API路径穿越读取",tags:["任意文件读取","路径穿越"]},
+	{name:"Apache Flink 任意文件写入 (CVE-2020-17518)",sev:"high",desc:"REST API文件写入Getshell",tags:["Getshell","文件写入"]},
+	{name:"Apache Dubbo 反序列化 (CVE-2019-17564)",sev:"high",desc:"HTTP协议反序列化RCE",tags:["RCE","反序列化"]},
+	{name:"Apache Dubbo CVE-2020-1948 RCE",sev:"critical",desc:"Dubbo恶意代码执行",tags:["RCE"]},
+	{name:"Apache Solr 未授权上传 (CVE-2019-0192)",sev:"high",desc:"Configset上传未授权",tags:["未授权","文件上传"]},
+	{name:"Apache Solr RCE (CVE-2019-0193)",sev:"critical",desc:"DataImportHandler RCE",tags:["RCE"]},
+	{name:"Apache DolphinScheduler 高危漏洞",sev:"critical",desc:"CVE-2020-11974/CVE-2020-13922 RCE",tags:["RCE"]},
+	// Spring
+	{name:"Spring Cloud Config Server 路径穿越+任意文件读取",sev:"critical",desc:"CVE-2020-5405，路径穿越读取敏感文件",tags:["路径穿越","任意文件读取"]},
+	{name:"Spring MVC RFD攻击 (CVE-2020-5398)",sev:"high",desc:"反射文件下载攻击",tags:["RFD"]},
+	{name:"Spring Data Commons RCE (CVE-2018-1273)",sev:"critical",desc:"Spring Data反序列化RCE",tags:["RCE","反序列化"]},
+	{name:"Spring Boot Actuator 敏感信息泄露",sev:"high",desc:"未授权访问/env /heapdump等端点",tags:["信息泄露","未授权"]},
+	// Jackson/Fastjson
+	{name:"Jackson反序列化RCE (CVE-2020-24616)",sev:"critical",desc:"支持readResolve导致RCE",tags:["RCE","反序列化"]},
+	{name:"Jackson-databind RCE (CVE-2020-9548)",sev:"critical",desc:"br.com.querico.gumps gadget",tags:["RCE","反序列化"]},
+	{name:"Fastjson 1.2.47 反序列化RCE",sev:"critical",desc:"autotype绕过，无需autoCommit",tags:["RCE","反序列化"]},
+	{name:"Fastjson <=1.2.62 反序列化RCE",sev:"critical",desc:"多个版本通杀RCE",tags:["RCE","反序列化"]},
+	// Nginx
+	{name:"Nginx PHP-FPM 解析漏洞",sev:"high",desc:"fastcgi_split_path配置错误导致解析",tags:["解析漏洞","文件上传"]},
+	{name:"Nginx 文件名逻辑漏洞",sev:"high",desc:"00截断绕过文件上传",tags:["文件上传","00截断"]},
+	{name:"Nginx 越界读取缓存 (CVE-2017-7529)",sev:"medium",desc:"整数溢出导致敏感数据泄露",tags:["信息泄露","整数溢出"]},
+	// CouchDB/Redis
+	{name:"CouchDB 任意命令执行 (CVE-2017-12636)",sev:"critical",desc:"JSON API权限绕过导致命令执行",tags:["命令执行"]},
+	{name:"CouchDB 垂直权限绕过 (CVE-2017-12635)",sev:"high",desc:"CouchDB权限绕过",tags:["权限绕过"]},
+	{name:"Redis 4.x/5.x 未授权访问-RCE",sev:"critical",desc:"主从同步RCE和rogue server",tags:["未授权","RCE"]},
+	{name:"Redis 未授权访问漏洞合集",sev:"high",desc:"Redis未授权+定时任务Getshell",tags:["未授权","Getshell"]},
+	// XStream/WebSphere
+	{name:"XStream RCE (CVE-2019-10173)",sev:"critical",desc:"1.4.10版本远程代码执行",tags:["RCE","反序列化"]},
+	{name:"IBM WebSphere XXE (CVE-2020-4643)",sev:"high",desc:"WebSphere XXE外部实体注入",tags:["XXE"]},
+	{name:"Django SQL注入 (CVE-2020-7471)",sev:"critical",desc:"Django SQL注入漏洞",tags:["SQL注入"]},
+	{name:"Django GIS SQL注入",sev:"high",desc:"GIS查询SQL注入",tags:["SQL注入"]},
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<BaseHead title="中间件/框架漏洞 - " + SITE_TITLE} description="Weblogic/Struts2/Shiro/Tomcat/Spring/Nginx等中间件和框架漏洞情报" />
+	<style>
+		.hero { padding: 3em 0 2em; border-bottom: 1px solid var(--border-color); margin-bottom: 2em; }
+		.hero h1 { color: var(--accent); font-size: 2em; }
+		.hero p { color: rgb(var(--gray)); }
+		.count-badge { display: inline-block; padding: 2px 12px; border-radius: 20px; background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.3); color: var(--accent); font-size: 0.85em; margin-bottom: 1em; }
+		.cat-tabs { display: flex; gap: 0.5em; flex-wrap: wrap; margin-bottom: 1.5em; }
+		.cat-tab { padding: 6px 16px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border-color); color: rgb(var(--gray)); font-size: 0.85em; text-decoration: none; }
+		.cat-tab:hover, .cat-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(0,212,170,0.06); }
+		.vul-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 0.8em; }
+		.vul-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 1em 1.2em; transition: all 0.2s; }
+		.vul-card:hover { border-color: var(--accent); }
+		.vul-card-header { display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.4em; flex-wrap: wrap; }
+		.vul-name { font-weight: 700; font-size: 0.92em; color: rgb(var(--black)); flex: 1; }
+		.vul-desc { font-size: 0.8em; color: rgb(var(--gray)); margin: 0; line-height: 1.5; }
+		.vul-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 0.5em; }
+		.sev-bar { width: 4px; border-radius: 2px; align-self: stretch; flex-shrink: 0; }
+		.bar-critical { background: var(--accent-red); }
+		.bar-high { background: #ffa502; }
+		.bar-medium { background: var(--accent-yellow); }
+	</style>
+</head>
+<body>
+	<Header />
+	<main>
+		<div class="hero">
+			<span class="count-badge">⚙️ 中间件/框架 · 80+ 漏洞</span>
+			<h1>⚙️ 中间件 & 框架漏洞</h1>
+			<p>收录 Weblogic、Struts2、Shiro、Tomcat、Apache、Spring、Nginx、Django、Jackson、Fastjson 等中间件和框架的漏洞情报。</p>
+		</div>
+
+		<div class="cat-tabs">
+			<a href="/vul/middleware" class="cat-tab active">全部漏洞</a>
+			<a href="/vul/middleware" class="cat-tab">Weblogic</a>
+			<a href="/vul/middleware" class="cat-tab">Struts2</a>
+			<a href="/vul/middleware" class="cat-tab">Apache</a>
+			<a href="/vul/middleware" class="cat-tab">Spring</a>
+			<a href="/vul/middleware" class="cat-tab">Shiro</a>
+			<a href="/vul/middleware" class="cat-tab">Nginx</a>
+			<a href="/vul/middleware" class="cat-tab">Fastjson/Jackson</a>
+		</div>
+
+		<div class="vul-grid">
+			{middlewareVulns.map(v => (
+				<div class="vul-card">
+					<div class="vul-card-header">
+						<div class={`sev-bar bar-${v.sev}`}></div>
+						<div class="vul-name">{v.name}</div>
+						<span class={`tag tag-${v.sev}`}>{v.sev === 'critical' ? '严重' : v.sev === 'high' ? '高危' : '中危'}</span>
+					</div>
+					<p class="vul-desc">{v.desc}</p>
+					<div class="vul-tags">{v.tags.map(t => <span class="tag tag-info">{t}</span>)}</div>
+				</div>
+			))}
+		</div>
+	</main>
+	<Footer />
+</body>
+</html>

@@ -1,0 +1,120 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+const kbArticles = [
+	{category:"Web安全",icon:"🌐",articles:[
+		{title:"SQL注入漏洞详解",desc:"Union注入、布尔盲注、时间盲注、报错注入、DNS外带等",href:"/kb"},
+		{title:"XSS跨站脚本攻击",desc:"反射型/存储型/DOM型XSS，XSS绕过与防护",href:"/kb"},
+		{title:"CSRF跨站请求伪造",desc:"CSRF原理、PoC构造、防护措施",href:"/kb"},
+		{title:"SSRF服务器端请求伪造",desc:"Gopher协议、内网探测、SSRF绕过技巧",href:"/kb"},
+		{title:"XXE外部实体注入",desc:"XML外部实体、DTD读取文件、Blind XXE",href:"/kb"},
+		{title:"反序列化漏洞详解",desc:"PHP/Java/Python反序列化POP链构造与利用",href:"/kb"},
+		{title:"文件上传漏洞",desc:"00截断、MIME绕过、黑名单绕过 Getshell技巧",href:"/kb"},
+		{title:"任意文件读取/下载",desc:"路径穿越、敏感文件读取",href:"/kb"},
+		{title:"越权访问漏洞",desc:"垂直越权、水平越权、IDOR攻击",href:"/kb"},
+	]},
+	{category:"渗透测试",icon:"🎯",articles:[
+		{title:"渗透测试流程与思路",desc:"信息收集→漏洞探测→Getshell→权限提升→横向移动",href:"/kb"},
+		{title:"内网渗透基础",desc:"内网信息收集、代理搭建、横向移动",href:"/kb"},
+		{title:"红队攻防实战",desc:"社工钓鱼、域渗透、免杀绕过",href:"/kb"},
+		{title:"中间件漏洞利用",desc:"Weblogic/Struts2/Shiro/Tomcat漏洞利用",href:"/kb"},
+		{title:"数据库渗透",desc:"MySQL/MSSQL/Redis/MongoDB未授权与注入",href:"/kb"},
+		{title:"BurpSuite使用技巧",desc:"被动扫描、Intruder爆破、Repeater重放",href:"/kb"},
+	]},
+	{category:"逆向工程",icon:"🔍",articles:[
+		{title:"Android APK逆向基础",desc:"反编译、重打包、Hook Frida/Xposed",href:"/kb"},
+		{title:"逆向分析流程",desc:"静态分析+动态调试，IDA/Ghidra使用",href:"/kb"},
+		{title:"恶意软件分析",desc:"行为分析、流量分析、Shellcode提取",href:"/kb"},
+		{title:"WebShell查杀与免杀",desc:"一句话木马、变形免杀、流量加密",href:"/kb"},
+	]},
+	{category:"CTF笔记",icon:"🏆",articles:[
+		{title:"Web CTF解题技巧",desc:"SQL注入/XSS/反序列化/文件上传WP",href:"/kb"},
+		{title:"Crypto密码学WP",desc:"RSA/AES/古典密码解题方法",href:"/kb"},
+		{title:"Pwn二进制漏洞",desc:"栈溢出/ROP/格式化字符串",href:"/kb"},
+		{title:"Reverse逆向WP",desc:"ARM/ELF/花指令去除技巧",href:"/kb"},
+	]},
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<BaseHead title="知识库 - " + SITE_TITLE} description="网络安全知识库，涵盖Web安全、渗透测试、逆向工程、CTF等" />
+	<style>
+		.hero { padding: 3em 0 2em; border-bottom: 1px solid var(--border-color); margin-bottom: 2em; }
+		.hero h1 { color: var(--accent); font-size: 2em; margin-bottom: 0.5em; }
+		.hero p { color: rgb(var(--gray)); max-width: 700px; }
+		.count-badge { display: inline-block; padding: 2px 12px; border-radius: 20px; background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.3); color: var(--accent); font-size: 0.85em; margin-bottom: 1em; }
+		.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 1.5em; margin-bottom: 2em; }
+		.cat-block { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+		.cat-header { padding: 1em 1.5em; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 0.5em; background: rgba(0,212,170,0.03); }
+		.cat-icon { font-size: 1.3em; }
+		.cat-name { font-weight: 700; font-size: 1.1em; color: var(--accent); }
+		.art-list { padding: 0.5em 0; }
+		.art-item { padding: 0.8em 1.5em; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 1em; transition: all 0.2s; }
+		.art-item:last-child { border-bottom: none; }
+		.art-item:hover { background: rgba(0,212,170,0.04); padding-left: 1.8em; }
+		.art-icon { font-size: 1.1em; flex-shrink: 0; }
+		.art-info { flex: 1; }
+		.art-title { font-weight: 600; font-size: 0.92em; color: rgb(var(--black)); text-decoration: none; display: block; }
+		.art-title:hover { color: var(--accent); }
+		.art-desc { font-size: 0.78em; color: rgb(var(--gray)); margin-top: 0.2em; }
+		.art-arrow { color: rgb(var(--gray)); font-size: 0.85em; flex-shrink: 0; }
+		@media (max-width: 600px) { .cat-grid { grid-template-columns: 1fr; } }
+	</style>
+</head>
+<body>
+	<Header />
+	<main>
+		<div class="hero">
+			<span class="count-badge">📚 知识库 · 50+ 篇文章</span>
+			<h1>📚 安全知识库</h1>
+			<p>网络安全知识笔记整理，覆盖 Web 安全漏洞原理、渗透测试方法、逆向分析技术、CTF 解题思路等。</p>
+		</div>
+
+		<h2 style="color:var(--accent);margin-bottom:1em;font-size:1.2em;">🔥 推荐阅读</h2>
+		<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.8em;margin-bottom:2em;">
+			{[
+				{href:"/kb",icon:"💉",title:"SQL注入",desc:"Union/布尔/时间盲注"},
+				{href:"/kb",icon:"💥",title:"XSS攻击",desc:"反射/存储/DOM型"},
+				{href:"/kb",icon:"🔄",title:"CSRF",desc:"原理与PoC构造"},
+				{href:"/kb",icon:"🌐",title:"SSRF",desc:"内网探测与绕过"},
+				{href:"/kb",icon:"📄",title:"XXE",desc:"外部实体注入"},
+				{href:"/kb",icon:"🔓",title:"反序列化",desc:"POP链构造利用"},
+			].map(item => (
+				<a href={item.href} style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;padding:1em;text-decoration:none;transition:all 0.2s;display:block;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border-color)'">
+					<div style="font-size:1.5em;margin-bottom:0.4em;">{item.icon}</div>
+					<div style="font-weight:700;font-size:0.92em;color:rgb(var(--black));">{item.title}</div>
+					<div style="font-size:0.78em;color:rgb(var(--gray));margin-top:0.2em;">{item.desc}</div>
+				</a>
+			))}
+		</div>
+
+		{ kbArticles.map(cat => (
+			<div class="cat-grid">
+				<div class="cat-block" style="grid-column:span 2;">
+					<div class="cat-header">
+						<span class="cat-icon">{cat.icon}</span>
+						<span class="cat-name">{cat.category}</span>
+					</div>
+					<div class="art-list">
+						{cat.articles.map(art => (
+							<div class="art-item">
+								<span class="art-icon">📄</span>
+								<div class="art-info">
+									<a href={art.href} class="art-title">{art.title}</a>
+									<div class="art-desc">{art.desc}</div>
+								</div>
+								<span class="art-arrow">→</span>
+							</div>
+						))}
+					</div>
+				</div>
+			</div>
+		))}
+	</main>
+	<Footer />
+</body>
+</html>

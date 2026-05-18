@@ -1,0 +1,85 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+const productVulns = [
+	{name:"phpMyAdmin SQL注入 (CVE-2020-0554)",sev:"high",desc:"pma_json_Ajax response.php SQL注入",tags:["SQL注入"]},
+	{name:"phpMyAdmin 任意文件读取 (CVE-2018-12613)",sev:"high",desc:"libraries/php-gettext/stamp文件包含",tags:["任意文件读取","文件包含"]},
+	{name:"phpMyAdmin 文件包含漏洞",sev:"medium",desc:"librarie/csrf漏洞利用",tags:["文件包含"]},
+	{name:"phpStudy 后门 (CVE-2019-12874)",sev:"critical",desc:"phpStudy默认安装后门，复现直接RCE",tags:["后门","RCE"]},
+	{name:"phpStudy nginx解析漏洞",sev:"high",desc:"nginx解析漏洞上传webshell",tags:["解析漏洞","Getshell"]},
+	{name:"phpStudy 敏感信息泄露",sev:"medium",desc:"数据库/日志/配置信息泄露",tags:["信息泄露"]},
+	{name:"Jenkins CVE-2019-1003000 RCE",sev:"critical",desc:"Sandbox绕过Groovy Getshell",tags:["RCE","Groovy"]},
+	{name:"Jenkins 未授权访问",sev:"high",desc:"script console未授权访问RCE",tags:["未授权","RCE"]},
+	{name:"GitLab CVE-2020-10977 任意文件读取+RCE",sev:"critical",desc:"import_export路径穿越RCE",tags:["RCE","任意文件读取"]},
+	{name:"GitLab 敏感信息泄露",sev:"medium",desc:"内部项目/凭据泄露",tags:["信息泄露"]},
+	{name:"Jira CVE-2019-8451 未授权SSRF",sev:"high",desc:"PluginDeploy SSRF内网探测",tags:["SSRF","未授权"]},
+	{name:"Jira Atlassian 信息泄露",sev:"medium",desc:"/rest/obmuth/latest获取用户信息",tags:["信息泄露"]},
+	{name:"Nexus CVE-2019-7238 RCE",sev:"critical",desc:"Nexus 3.x JNDI注入RCE",tags:["RCE","JNDI"]},
+	{name:"Nexus CVE-2020-11753 Groovy注入",sev:"high",desc:"Nexus Repository Groovy RCE",tags:["命令注入"]},
+	{name:"Nexus CVE-2020-10199/10204 命令执行",sev:"critical",desc:"Nexus OSS命令执行",tags:["命令执行"]},
+	{name:"Kibana CVE-2019-7609 未授权RCE",sev:"critical",desc:"Kibana <6.6.0 Canvas Timelion RCE",tags:["RCE","未授权"]},
+	{name:"Cacti CVE-2020-8813 RCE",sev:"critical",desc:"Cacti 1.2.8监测参数RCE",tags:["RCE"]},
+	{name:"Citrix CVE-2019-19781 远程代码执行",sev:"critical",desc:"ADC网关目录遍历+模板注入",tags:["RCE","目录遍历"]},
+	{name:"Citrix 远程代码执行漏洞",sev:"critical",desc:"SSL VPN网关未授权RCE",tags:["RCE","未授权"]},
+	{name:"FortiGate SSL VPN 多漏洞",sev:"critical",desc:"CVE-2018-13379/13382/13383等",tags:["VPN","RCE"]},
+	{name:"SonicWall SSL VPN 未授权RCE",sev:"critical",desc:"CVE-2021-20038绕过RCE",tags:["RCE","VPN"]},
+	{name:"Adminer SSRF",sev:"medium",desc:"Adminer服务器端请求伪造",tags:["SSRF"]},
+	{name:"ShowDoc 任意文件上传Getshell",sev:"critical",desc:"api page任意文件上传",tags:["Getshell","文件上传"]},
+	{name:"SpamTitan 7.07 多RCE",sev:"critical",desc:"多个接口命令注入",tags:["RCE","命令注入"]},
+	{name:"Metabase CVE-2021-41277 信息泄露",sev:"high",desc:"路径穿越读取本地文件",tags:["任意文件读取","路径穿越"]},
+	{name:"Harbor CVE-2019-16097 任意管理员注册",sev:"high",desc:"注册接口未授权创建管理员",tags:["未授权","权限提升"]},
+	{name:"rConfig v3.9.2 RCE",sev:"critical",desc:"rConfig网络配置管理RCE",tags:["RCE"]},
+	{name:"Laravel Debug Mode RCE",sev:"critical",desc:".env泄露+反序列化RCE",tags:["RCE","信息泄露"]},
+	{name:"CodeIgniter 反序列化RCE",sev:"critical",desc:"phar://协议触发反序列化",tags:["RCE","反序列化"]},
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<BaseHead title="产品/工具漏洞 - " + SITE_TITLE} description="phpMyAdmin/Jenkins/GitLab/Redis/Nexus/Kibana等产品和工具漏洞情报" />
+</head>
+<style>
+	.hero { padding: 3em 0 2em; border-bottom: 1px solid var(--border-color); margin-bottom: 2em; }
+	.hero h1 { color: var(--accent); font-size: 2em; }
+	.hero p { color: rgb(var(--gray)); }
+	.count-badge { display: inline-block; padding: 2px 12px; border-radius: 20px; background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.3); color: var(--accent); font-size: 0.85em; margin-bottom: 1em; }
+	.vul-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 0.8em; }
+	.vul-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 1em 1.2em; transition: all 0.2s; }
+	.vul-card:hover { border-color: var(--accent); }
+	.vul-card-header { display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.4em; flex-wrap: wrap; }
+	.vul-name { font-weight: 700; font-size: 0.92em; color: rgb(var(--black)); flex: 1; }
+	.vul-desc { font-size: 0.8em; color: rgb(var(--gray)); margin: 0; line-height: 1.5; }
+	.vul-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 0.5em; }
+	.sev-bar { width: 4px; border-radius: 2px; align-self: stretch; flex-shrink: 0; }
+	.bar-critical { background: var(--accent-red); }
+	.bar-high { background: #ffa502; }
+	.bar-medium { background: var(--accent-yellow); }
+</style>
+<body>
+	<Header />
+	<main>
+		<div class="hero">
+			<span class="count-badge">🛠️ 产品/工具 · 30+ 款</span>
+			<h1>🛠️ 产品 & 工具漏洞</h1>
+			<p>收录 phpMyAdmin、Jenkins、GitLab、Redis、Nexus、Kibana、Git、Cacti、rConfig 等服务器产品和开发运维工具的漏洞情报。</p>
+		</div>
+		<div class="vul-grid">
+			{productVulns.map(v => (
+				<div class="vul-card">
+					<div class="vul-card-header">
+						<div class={`sev-bar bar-${v.sev}`}></div>
+						<div class="vul-name">{v.name}</div>
+						<span class={`tag tag-${v.sev}`}>{v.sev === 'critical' ? '严重' : '高危'}</span>
+					</div>
+					<p class="vul-desc">{v.desc}</p>
+					<div class="vul-tags">{v.tags.map(t => <span class="tag tag-info">{t}</span>)}</div>
+				</div>
+			))}
+		</div>
+	</main>
+	<Footer />
+</body>
+</html>

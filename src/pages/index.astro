@@ -6,45 +6,511 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 ---
 
 <!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to <a href="https://docs.astro.build/"
-					>read the docs
-				</a> or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out <a
-					href="https://github.com/Charca/astro-blog-template"
-					>astro-blog-template
-				</a> by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
+<html lang="zh-CN">
+<head>
+	<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+	<style>
+		/* ---- Hero Section ---- */
+		.hero {
+			text-align: center;
+			padding: 4em 1em 3em;
+			border-bottom: 1px solid var(--border-color);
+			background: linear-gradient(180deg, rgba(0, 212, 170, 0.04) 0%, transparent 100%);
+		}
+		.hero-badge {
+			display: inline-block;
+			padding: 4px 14px;
+			border-radius: 20px;
+			background: rgba(0, 212, 170, 0.1);
+			border: 1px solid rgba(0, 212, 170, 0.3);
+			color: var(--accent);
+			font-size: 0.8em;
+			font-weight: 600;
+			margin-bottom: 1.5em;
+			letter-spacing: 0.05em;
+		}
+		.hero h1 {
+			font-size: 3em;
+			margin-bottom: 0.3em;
+			background: linear-gradient(135deg, var(--accent), #00b4d8, var(--accent-purple));
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+		}
+		.hero h1 span { -webkit-text-fill-color: var(--accent); }
+		.hero p {
+			font-size: 1.1em;
+			color: rgb(var(--gray));
+			max-width: 640px;
+			margin: 0 auto 2em;
+			line-height: 1.8;
+		}
+		.hero-stats {
+			display: flex;
+			justify-content: center;
+			gap: 3em;
+			margin-top: 2em;
+		}
+		.stat-item {
+			text-align: center;
+		}
+		.stat-number {
+			font-size: 2.2em;
+			font-weight: 700;
+			color: var(--accent);
+			display: block;
+			font-family: monospace;
+		}
+		.stat-label {
+			font-size: 0.8em;
+			color: rgb(var(--gray));
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+		}
+
+		/* ---- Quick Access ---- */
+		.quick-access {
+			max-width: 1200px;
+			margin: 2em auto;
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 1em;
+		}
+		.quick-card {
+			background: var(--bg-card);
+			border: 1px solid var(--border-color);
+			border-radius: 12px;
+			padding: 1.5em;
+			text-decoration: none;
+			transition: all 0.2s ease;
+			display: flex;
+			align-items: center;
+			gap: 1em;
+		}
+		.quick-card:hover {
+			border-color: var(--accent);
+			transform: translateY(-2px);
+			box-shadow: 0 8px 30px rgba(0, 212, 170, 0.1);
+		}
+		.quick-icon {
+			font-size: 2em;
+			flex-shrink: 0;
+		}
+		.quick-info h3 {
+			margin: 0 0 0.3em 0;
+			font-size: 1em;
+			color: rgb(var(--black));
+		}
+		.quick-info p {
+			margin: 0;
+			font-size: 0.8em;
+			color: rgb(var(--gray));
+		}
+
+		/* ---- Section Title ---- */
+		.section-title {
+			font-size: 1.3em;
+			font-weight: 700;
+			color: var(--accent);
+			padding-bottom: 0.5em;
+			border-bottom: 2px solid var(--accent);
+			margin: 2em 0 1em;
+			display: flex;
+			align-items: center;
+			gap: 0.5em;
+		}
+		.section-title .more {
+			margin-left: auto;
+			font-size: 0.75em;
+			font-weight: 400;
+			color: rgb(var(--gray));
+			text-decoration: none;
+		}
+		.section-title .more:hover {
+			color: var(--accent);
+		}
+
+		/* ---- Vul Grid ---- */
+		.vul-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+			gap: 1em;
+		}
+		.vul-card {
+			background: var(--bg-card);
+			border: 1px solid var(--border-color);
+			border-radius: 10px;
+			padding: 1.2em;
+			text-decoration: none;
+			transition: all 0.2s;
+			display: block;
+		}
+		.vul-card:hover {
+			border-color: var(--accent);
+			box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+		}
+		.vul-card-header {
+			display: flex;
+			align-items: center;
+			gap: 0.5em;
+			margin-bottom: 0.5em;
+			flex-wrap: wrap;
+		}
+		.vul-title {
+			font-weight: 700;
+			font-size: 0.95em;
+			color: rgb(var(--black));
+			margin: 0;
+		}
+		.vul-desc {
+			font-size: 0.82em;
+			color: rgb(var(--gray));
+			margin: 0.4em 0 0;
+			line-height: 1.6;
+		}
+		.vul-tags {
+			display: flex;
+			gap: 0.3em;
+			flex-wrap: wrap;
+			margin-top: 0.6em;
+		}
+
+		/* ---- KB List ---- */
+		.kb-list {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+			gap: 0.8em;
+		}
+		.kb-item {
+			background: var(--bg-card);
+			border: 1px solid var(--border-color);
+			border-radius: 8px;
+			padding: 1em 1.2em;
+			text-decoration: none;
+			transition: all 0.2s;
+			display: flex;
+			align-items: center;
+			gap: 0.6em;
+		}
+		.kb-item:hover {
+			border-color: var(--accent);
+			color: var(--accent);
+		}
+		.kb-item-icon { font-size: 1.3em; }
+		.kb-item-title {
+			font-weight: 600;
+			font-size: 0.88em;
+			color: rgb(var(--black));
+		}
+		.kb-item:hover .kb-item-title { color: var(--accent); }
+
+		/* ---- Search Bar ---- */
+		.search-bar {
+			max-width: 560px;
+			margin: 1em auto 0;
+			display: flex;
+			gap: 0;
+		}
+		.search-bar input {
+			flex: 1;
+			padding: 0.7em 1em;
+			border-radius: 8px 0 0 8px;
+			border: 1px solid var(--border-color);
+			border-right: none;
+			background: var(--bg-card);
+			color: rgb(var(--black));
+			font-size: 0.95em;
+		}
+		.search-bar button {
+			padding: 0.7em 1.2em;
+			background: var(--accent);
+			color: var(--bg-dark);
+			border: none;
+			border-radius: 0 8px 8px 0;
+			cursor: pointer;
+			font-weight: 700;
+			font-size: 0.95em;
+		}
+
+		@media (max-width: 768px) {
+			.hero h1 { font-size: 2em; }
+			.hero-stats { gap: 1.5em; }
+			.stat-number { font-size: 1.6em; }
+			.vul-grid { grid-template-columns: 1fr; }
+		}
+	</style>
+</head>
+<body>
+	<Header />
+	<main>
+
+		<!-- Hero -->
+		<section class="hero">
+			<div class="hero-badge">🛡️ 安全知识库 · 漏洞情报中心</div>
+			<h1>KalaSpace <span>Sec</span></h1>
+			<p>专注网络安全研究与漏洞情报整理，覆盖 Web安全、渗透测试、逆向工程、CTF 等领域知识，
+			以及国内外主流系统的漏洞 POC/复现记录。</p>
+			<div class="hero-stats">
+				<div class="stat-item">
+					<span class="stat-number">300+</span>
+					<span class="stat-label">漏洞记录</span>
+				</div>
+				<div class="stat-item">
+					<span class="stat-number">200+</span>
+					<span class="stat-label">CVE编号</span>
+				</div>
+				<div class="stat-item">
+					<span class="stat-number">50+</span>
+					<span class="stat-label">知识文章</span>
+				</div>
+				<div class="stat-item">
+					<span class="stat-number">15+</span>
+					<span class="stat-label">漏洞分类</span>
+				</div>
+			</div>
+		</section>
+
+		<!-- Quick Access -->
+		<div class="quick-access">
+			<a href="/vul" class="quick-card">
+				<span class="quick-icon">🔴</span>
+				<div class="quick-info">
+					<h3>漏洞库总览</h3>
+					<p>按分类浏览所有漏洞情报</p>
+				</div>
+			</a>
+			<a href="/kb" class="quick-card">
+				<span class="quick-icon">📚</span>
+				<div class="quick-info">
+					<h3>知识库总览</h3>
+					<p>Web安全 · 渗透测试 · 逆向</p>
+				</div>
+			</a>
+			<a href="/kb/cheatsheet" class="quick-card">
+				<span class="quick-icon">📋</span>
+				<div class="quick-info">
+					<h3>速查表</h3>
+					<p>XSS · SQL注入 · 端口 · 弱口令</p>
+				</div>
+			</a>
+			<a href="/vul/middleware" class="quick-card">
+				<span class="quick-icon">⚙️</span>
+				<div class="quick-info">
+					<h3>框架/中间件</h3>
+					<p>Struts2 · Weblogic · Shiro</p>
+				</div>
+			</a>
+			<a href="/vul/cms" class="quick-card">
+				<span class="quick-icon">🏠</span>
+				<div class="quick-info">
+					<h3>CMS漏洞</h3>
+					<p>DedeCMS · WordPress · Discuz</p>
+				</div>
+			</a>
+			<a href="/vul/system" class="quick-card">
+				<span class="quick-icon">💻</span>
+				<div class="quick-info">
+					<h3>系统漏洞</h3>
+					<p>Windows · Linux · macOS</p>
+				</div>
+			</a>
+		</div>
+
+		<!-- Latest Vulnerabilities -->
+		<h2 class="section-title">🔥 最新漏洞 <a href="/vul" class="more">查看全部 →</a></h2>
+		<div class="vul-grid">
+
+			<a href="/vul/cms" class="vul-card">
+				<div class="vul-card-header">
+					<span class="tag tag-critical">严重</span>
+					<span class="cve">CVE-2019-0708</span>
+				</div>
+				<h3 class="vul-title">BlueKeep RDP 远程代码执行</h3>
+				<p class="vul-desc">Windows RDP 服务远程代码执行漏洞，影响 Windows 7/Server 2008 等</p>
+				<div class="vul-tags">
+					<span class="tag tag-critical">RCE</span>
+					<span class="tag tag-info">Windows</span>
+					<span class="tag tag-info">Remote</span>
+				</div>
+			</a>
+
+			<a href="/vul/middleware" class="vul-card">
+				<div class="vul-card-header">
+					<span class="tag tag-critical">严重</span>
+					<span class="cve">CVE-2020-14882</span>
+				</div>
+				<h3 class="vul-title">Weblogic 未授权远程代码执行</h3>
+				<p class="vul-desc">Weblogic -console JNDI注入绕过，未经授权即可远程执行代码</p>
+				<div class="vul-tags">
+					<span class="tag tag-critical">RCE</span>
+					<span class="tag tag-info">Weblogic</span>
+					<span class="tag tag-info">JNDI</span>
+				</div>
+			</a>
+
+			<a href="/vul/middleware" class="vul-card">
+				<div class="vul-card-header">
+					<span class="tag tag-critical">严重</span>
+					<span class="cve">CVE-2018-2628</span>
+				</div>
+				<h3 class="vul-title">Weblogic T3 反序列化远程命令执行</h3>
+				<p class="vul-desc">Weblogic T3 协议反序列化漏洞，可直接Getshell，影响全版本</p>
+				<div class="vul-tags">
+					<span class="tag tag-critical">RCE</span>
+					<span class="tag tag-info">反序列化</span>
+					<span class="tag tag-info">Weblogic</span>
+				</div>
+			</a>
+
+			<a href="/vul/cms" class="vul-card">
+				<div class="vul-card-header">
+					<span class="tag tag-high">高危</span>
+					<span class="cve">CVE-2020-2555</span>
+				</div>
+				<h3 class="vul-title">ThinkPHP 5.x 远程代码执行</h3>
+				<p class="vul-desc">ThinkPHP 5.0-5.0.23 / 5.1-5.1.31 全版本通杀RCE，无需登录</p>
+				<div class="vul-tags">
+					<span class="tag tag-critical">RCE</span>
+					<span class="tag tag-info">ThinkPHP</span>
+					<span class="tag tag-info">全版本</span>
+				</div>
+			</a>
+
+			<a href="/vul/cms" class="vul-card">
+				<div class="vul-card-header">
+					<span class="tag tag-high">高危</span>
+					<span class="cve">CVE-2017-10271</span>
+				</div>
+				<h3 class="vul-title">Weblogic XMLDecoder 反序列化</h3>
+				<p class="vul-desc">Weblogic XMLDecoder 反序列化漏洞，通过SOAP请求触发远程代码执行</p>
+				<div class="vul-tags">
+					<span class="tag tag-critical">RCE</span>
+					<span class="tag tag-info">Weblogic</span>
+					<span class="tag tag-info">XMLDecoder</span>
+				</div>
+			</a>
+
+			<a href="/vul/system" class="vul-card">
+				<div class="vul-card-header">
+					<span class="tag tag-critical">严重</span>
+					<span class="cve">CVE-2020-1350</span>
+				</div>
+				<h3 class="vul-title">SigRed DNS 服务远程代码执行</h3>
+				<p class="vul-desc">Windows DNS Server蠕虫级漏洞，可横向传播，影响Windows Server所有版本</p>
+				<div class="vul-tags">
+					<span class="tag tag-critical">RCE</span>
+					<span class="tag tag-info">DNS</span>
+					<span class="tag tag-info">蠕虫</span>
+				</div>
+			</a>
+
+			<a href="/vul/middleware" class="vul-card">
+				<div class="vul-card-header">
+					<span class="tag tag-high">高危</span>
+					<span class="cve">S2-045</span>
+				</div>
+				<h3 class="vul-title">Struts2 S2-045 远程代码执行</h3>
+				<p class="vul-desc">Struts2 Jakarta Multipart解析器漏洞，远程攻击者可执行任意代码</p>
+				<div class="vul-tags">
+					<span class="tag tag-critical">RCE</span>
+					<span class="tag tag-info">Struts2</span>
+					<span class="tag tag-info">OGNL注入</span>
+				</div>
+			</a>
+
+			<a href="/vul/cms" class="vul-card">
+				<div class="vul-card-header">
+					<span class="tag tag-high">高危</span>
+					<span class="cve">CVE-2018-7700</span>
+				</div>
+				<h3 class="vul-title">DedeCMS V5.7 后台任意代码执行</h3>
+				<p class="vul-desc">DedeCMS 5.7 SP2后台存在代码执行漏洞，可通过模板标签绕过</p>
+				<div class="vul-tags">
+					<span class="tag tag-critical">RCE</span>
+					<span class="tag tag-info">DedeCMS</span>
+					<span class="tag tag-info">后台</span>
+				</div>
+			</a>
+
+		</div>
+
+		<!-- Knowledge Base -->
+		<h2 class="section-title">📚 知识库 <a href="/kb" class="more">查看全部 →</a></h2>
+		<div class="kb-list">
+
+			<a href="/kb/sql-injection" class="kb-item">
+				<span class="kb-item-icon">💉</span>
+				<span class="kb-item-title">SQL注入漏洞详解</span>
+			</a>
+			<a href="/kb/xss" class="kb-item">
+				<span class="kb-item-icon">💥</span>
+				<span class="kb-item-title">XSS跨站脚本攻击</span>
+			</a>
+			<a href="/kb/csrf" class="kb-item">
+				<span class="kb-item-icon">🔄</span>
+				<span class="kb-item-title">CSRF跨站请求伪造</span>
+			</a>
+			<a href="/kb/xxe" class="kb-item">
+				<span class="kb-item-icon">📄</span>
+				<span class="kb-item-title">XXE外部实体注入</span>
+			</a>
+			<a href="/kb/ssrf" class="kb-item">
+				<span class="kb-item-icon">🌐</span>
+				<span class="kb-item-title">SSRF服务器端请求伪造</span>
+			</a>
+			<a href="/kb/deserialization" class="kb-item">
+				<span class="kb-item-icon">🔓</span>
+				<span class="kb-item-title">反序列化漏洞</span>
+			</a>
+			<a href="/kb/file-upload" class="kb-item">
+				<span class="kb-item-icon">📤</span>
+				<span class="kb-item-title">文件上传漏洞</span>
+			</a>
+			<a href="/kb/auth-bypass" class="kb-item">
+				<span class="kb-item-icon">🔑</span>
+				<span class="kb-item-title">越权访问漏洞</span>
+			</a>
+			<a href="/kb/shell" class="kb-item">
+				<span class="kb-item-icon">🐚</span>
+				<span class="kb-item-title">WebShell入门</span>
+			</a>
+			<a href="/kb/ports" class="kb-item">
+				<span class="kb-item-icon">🔌</span>
+				<span class="kb-item-title">常见端口速查表</span>
+			</a>
+
+		</div>
+
+		<!-- Vul Categories -->
+		<h2 class="section-title">📂 漏洞分类</h2>
+		<div class="quick-access">
+			<a href="/vul/cms" class="quick-card">
+				<span class="quick-icon">🏠</span>
+				<div class="quick-info"><h3>CMS漏洞</h3><p>DedeCMS · WordPress · Discuz · PHPCMS · 泛微 · 致远 · 禅道</p></div>
+			</a>
+			<a href="/vul/editor" class="quick-card">
+				<span class="quick-icon">📝</span>
+				<div class="quick-info"><h3>编辑器漏洞</h3><p>KindEditor · Ueditor · FCKeditor · EWebEditor · CKEditor</p></div>
+			</a>
+			<a href="/vul/middleware" class="quick-card">
+				<span class="quick-icon">⚙️</span>
+				<div class="quick-info"><h3>中间件/框架漏洞</h3><p>Weblogic · Struts2 · Shiro · Tomcat · Apache · Nginx</p></div>
+			</a>
+			<a href="/vul/product" class="quick-card">
+				<span class="quick-icon">🛠️</span>
+				<div class="quick-info"><h3>产品/工具漏洞</h3><p>phpMyAdmin · Jenkins · GitLab · Redis · Jira · Kibana</p></div>
+			</a>
+			<a href="/vul/system" class="quick-card">
+				<span class="quick-icon">💻</span>
+				<div class="quick-info"><h3>系统漏洞</h3><p>Windows · Linux · macOS · BlueKeep · SMB</p></div>
+			</a>
+			<a href="/vul/iot" class="quick-card">
+				<span class="quick-icon">📡</span>
+				<div class="quick-info"><h3>IoT/网络设备</h3><p>路由器 · 摄像头 · VPN · SSL · 海康威视 · 深信服</p></div>
+			</a>
+		</div>
+
+	</main>
+	<Footer />
+</body>
 </html>

@@ -1,0 +1,81 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+const iotVulns = [
+	{name:"F5 BIG-IP TMUI CVE-2020-5902 RCE",sev:"critical",desc:"流量管理用户界面远程代码执行",tags:["RCE"]},
+	{name:"F5 BIG-IP CVE-2020-8868/8869",sev:"critical",desc:"TMM沟通过程RCE",tags:["RCE"]},
+	{name:"Pulse Secure CVE-2019-11510",sev:"critical",desc:"VPN未授权文件读取，可获取SSH私钥",tags:["VPN","未授权"]},
+	{name:"深信服EDR 远程命令执行",sev:"critical",desc:"RCE漏洞，HVV期间高频漏洞",tags:["RCE","EDR"]},
+	{name:"深信服EDR 任意命令执行",sev:"critical",desc:"命令注入RCE",tags:["命令注入","RCE"]},
+	{name:"深信服EDR 任意用户登录",sev:"high",desc:"Cookie伪造绕过认证",tags:["认证绕过"]},
+	{name:"深信服VPN 任意密码重置",sev:"high",desc:"密码重置逻辑缺陷",tags:["密码重置"]},
+	{name:"齐治堡垒机 前台RCE",sev:"critical",desc:"未授权RCE堡垒机漏洞",tags:["RCE","未授权"]},
+	{name:"锐捷易网关 远程命令执行",sev:"critical",desc:"多处RCE未授权",tags:["RCE","未授权"]},
+	{name:"锐捷网络 EWEB网管系统RCE",sev:"critical",desc:"网管系统命令注入",tags:["RCE","命令注入"]},
+	{name:"D-Link CVE-2019-16920 RCE",sev:"high",desc:"D-Link路由器HNAP RCE",tags:["RCE","路由器"]},
+	{name:"Tenda AC15 路由器 CVE-2020-9374",sev:"high",desc:"USB设备参数命令注入",tags:["命令注入","路由器"]},
+	{name:"TP-Link CVE-2020-9374 命令注入",sev:"high",desc:"摄像头命令注入",tags:["命令注入","摄像头"]},
+	{name:"海康威视 CVE-2017-7921",sev:"high",desc:"海康摄像头弱加密漏洞，可获取视频流",tags:["弱加密","摄像头"]},
+	{name:"天融信 TopApp-LB SQL注入",sev:"high",desc:"负载均衡SQL注入",tags:["SQL注入"]},
+	{name:"天融信 数据防泄漏系统 越权",sev:"medium",desc:"越权修改管理员密码",tags:["越权","密码修改"]},
+	{name:"宝塔面板 phpMyAdmin 未授权访问",sev:"high",desc:"phpMyAdmin无密码未授权访问",tags:["未授权","phpMyAdmin"]},
+	{name:"Cisco ASA CVE-2020-3452 任意文件读取",sev:"medium",desc:"SSLVPN文件读取",tags:["任意文件读取"]},
+	{name:"Cisco 安全管理器 CVE-2020-27131 反序列化",sev:"high",desc:"CSM反序列化RCE",tags:["RCE","反序列化"]},
+	{name:"蜂网互联 CVE-2019-16313 密码泄露",sev:"medium",desc:"路由器配置文件密码泄露",tags:["密码泄露","路由器"]},
+	{name:"天翼创维 awifi路由器 未授权访问",sev:"high",desc:"多处未授权访问漏洞",tags:["未授权"]},
+	{name:"网瑞达 webvpn 远程命令执行",sev:"critical",desc:"webvpn命令注入",tags:["RCE","命令注入"]},
+	{name:"华为 WS331a CSRF漏洞",sev:"low",desc:"管理页面CSRF",tags:["CSRF"]},
+	{name:"华硕 RT-N13 密码绕过",sev:"medium",desc:"QIS_wizard任意密码绕过",tags:["密码绕过"]},
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<BaseHead title="IoT/网络设备漏洞 - " + SITE_TITLE} description="路由器/摄像头/VPN/防火墙/F5等网络设备和安全产品漏洞情报" />
+</head>
+<style>
+	.hero { padding: 3em 0 2em; border-bottom: 1px solid var(--border-color); margin-bottom: 2em; }
+	.hero h1 { color: var(--accent); font-size: 2em; }
+	.hero p { color: rgb(var(--gray)); }
+	.count-badge { display: inline-block; padding: 2px 12px; border-radius: 20px; background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.3); color: var(--accent); font-size: 0.85em; margin-bottom: 1em; }
+	.vul-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 0.8em; }
+	.vul-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 1em 1.2em; transition: all 0.2s; }
+	.vul-card:hover { border-color: var(--accent); }
+	.vul-card-header { display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.4em; flex-wrap: wrap; }
+	.vul-name { font-weight: 700; font-size: 0.92em; color: rgb(var(--black)); flex: 1; }
+	.vul-desc { font-size: 0.8em; color: rgb(var(--gray)); margin: 0; line-height: 1.5; }
+	.vul-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 0.5em; }
+	.sev-bar { width: 4px; border-radius: 2px; align-self: stretch; flex-shrink: 0; }
+	.bar-critical { background: var(--accent-red); }
+	.bar-high { background: #ffa502; }
+	.bar-medium { background: var(--accent-yellow); }
+	.bar-low { background: var(--accent); }
+</style>
+<body>
+	<Header />
+	<main>
+		<div class="hero">
+			<span class="count-badge">📡 IoT/设备 · 20+ 款</span>
+			<h1>📡 IoT & 网络设备漏洞</h1>
+			<p>收录路由器、摄像头、VPN、防火墙、堡垒机、负载均衡等网络设备和安全产品的漏洞情报。</p>
+		</div>
+		<div class="vul-grid">
+			{iotVulns.map(v => (
+				<div class="vul-card">
+					<div class="vul-card-header">
+						<div class={`sev-bar bar-${v.sev}`}></div>
+						<div class="vul-name">{v.name}</div>
+						<span class={`tag tag-${v.sev}`}>{v.sev === 'critical' ? '严重' : v.sev === 'high' ? '高危' : v.sev === 'medium' ? '中危' : '低危'}</span>
+					</div>
+					<p class="vul-desc">{v.desc}</p>
+					<div class="vul-tags">{v.tags.map(t => <span class="tag tag-info">{t}</span>)}</div>
+				</div>
+			))}
+		</div>
+	</main>
+	<Footer />
+</body>
+</html>

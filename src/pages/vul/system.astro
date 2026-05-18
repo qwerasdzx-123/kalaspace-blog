@@ -1,0 +1,96 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+const systemVulns = [
+	// Windows
+	{name:"BlueKeep CVE-2019-0708 RDP RCE",sev:"critical",desc:"RDP服务RCE，影响Win7/2008/2003，无需交互",tags:["RCE","RDP","Remote"]},
+	{name:"SMBGhost CVE-2020-0796 本地提权",sev:"high",desc:"Win10 SMB 3.1.1缓冲区溢出LPE",tags:["提权","SMB"]},
+	{name:"SMBleed CVE-2020-1206 信息泄露",sev:"medium",desc:"SMB协议信息泄露，可配合SMBGhost",tags:["信息泄露"]},
+	{name:"SigRed CVE-2020-1350 DNS Server RCE",sev:"critical",desc:"Windows DNS Server蠕虫级RCE，可横向传播",tags:["RCE","DNS","蠕虫"]},
+	{name:"Bad Neighbor CVE-2020-16898 TCPIP RCE",sev:"critical",desc:"IPv6路由通告恶意包RCE",tags:["RCE","TCP/IP"]},
+	{name:"Windows Print Spooler CVE-2020-1048",sev:"high",desc:"Print Spooler权限提升",tags:["提权"]},
+	{name:"Windows Print Spooler CVE-2020-1337",sev:"high",desc:"Print Spooler文件覆盖提权",tags:["提权"]},
+	{name:"CVE-2019-0803 Win32k 本地提权",sev:"high",desc:"Win32k.sys空指针解引用LPE",tags:["提权","Win32k"]},
+	{name:"CVE-2020-17083 Exchange Server RCE",sev:"high",desc:"Exchange Server任意代码执行",tags:["RCE","Exchange"]},
+	// Linux
+	{name:"Sudo CVE-2021-3156 权限提升",sev:"critical",desc:"sudo堆缓冲区溢出，任何用户提权root",tags:["提权","sudo"]},
+	{name:"Linux Kernel CVE-2021-3493 提权",sev:"critical",desc:"eBPF提权漏洞",tags:["提权","kernel"]},
+	{name:"Polkit CVE-2021-4034 Pwnkit提权",sev:"critical",desc:"pkexec本地提权，影响所有Linux",tags:["提权","本地"]},
+	{name:"DirtyPipe CVE-2022-0847 提权",sev:"critical",desc:"Linux内核管道缓冲区提权",tags:["提权","内核"]},
+	{name:"DirtyCow CVE-2016-5195 提权",sev:"high",desc:"脏牛本地提权，写任意文件",tags:["提权","内核"]},
+	{name:"Log4Shell CVE-2021-44228 RCE",sev:"critical",desc:"Log4j JNDI注入RCE，影响范围极广",tags:["RCE","JNDI","日志"]},
+	{name:"OpenSSH CVE-2020-15778 命令注入",sev:"high",desc:"scp命令注入",tags:["命令注入"]},
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<BaseHead title="系统漏洞 - " + SITE_TITLE} description="Windows/Linux/macOS系统漏洞，CVE编号和漏洞详情" />
+</head>
+<style>
+	.hero { padding: 3em 0 2em; border-bottom: 1px solid var(--border-color); margin-bottom: 2em; }
+	.hero h1 { color: var(--accent); font-size: 2em; }
+	.hero p { color: rgb(var(--gray)); }
+	.count-badge { display: inline-block; padding: 2px 12px; border-radius: 20px; background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.3); color: var(--accent); font-size: 0.85em; margin-bottom: 1em; }
+	.vul-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 0.8em; }
+	.vul-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 1em 1.2em; transition: all 0.2s; }
+	.vul-card:hover { border-color: var(--accent); }
+	.vul-card-header { display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.4em; flex-wrap: wrap; }
+	.vul-name { font-weight: 700; font-size: 0.92em; color: rgb(var(--black)); flex: 1; }
+	.vul-desc { font-size: 0.8em; color: rgb(var(--gray)); margin: 0; line-height: 1.5; }
+	.vul-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 0.5em; }
+	.sev-bar { width: 4px; border-radius: 2px; align-self: stretch; flex-shrink: 0; }
+	.bar-critical { background: var(--accent-red); }
+	.bar-high { background: #ffa502; }
+	.bar-medium { background: var(--accent-yellow); }
+	.notice { background: rgba(255,71,87,0.08); border: 1px solid rgba(255,71,87,0.3); border-radius: 8px; padding: 1em 1.2em; margin-bottom: 2em; color: var(--accent-red); font-size: 0.9em; }
+</style>
+<body>
+	<Header />
+	<main>
+		<div class="hero">
+			<span class="count-badge">💻 系统漏洞 · 20+ 漏洞</span>
+			<h1>💻 系统漏洞</h1>
+			<p>收录 Windows、Linux、macOS 等操作系统内核和服务的关键漏洞情报，包括 RDP、SMB、DNS、Print Spooler、Sudo 等组件漏洞。</p>
+		</div>
+
+		<div class="notice">
+			⚠️ <strong>免责声明：</strong>以下漏洞仅供安全研究与学习使用，未经授权禁止对任何系统进行渗透测试。
+		</div>
+
+		<h2 style="color:var(--accent);margin-bottom:0.5em;font-size:1.1em;">🐧 Linux 内核漏洞</h2>
+		<div class="vul-grid" style="margin-bottom:2em;">
+			{systemVulns.filter(v=>v.name.includes("Linux")||v.name.includes("Sudo")||v.name.includes("Dirty")||v.name.includes("Polkit")||v.name.includes("Log4")||v.name.includes("OpenSSH")).map(v => (
+				<div class="vul-card">
+					<div class="vul-card-header">
+						<div class={`sev-bar bar-${v.sev}`}></div>
+						<div class="vul-name">{v.name}</div>
+						<span class={`tag tag-${v.sev}`}>{v.sev === 'critical' ? '严重' : v.sev === 'high' ? '高危' : '中危'}</span>
+					</div>
+					<p class="vul-desc">{v.desc}</p>
+					<div class="vul-tags">{v.tags.map(t => <span class="tag tag-info">{t}</span>)}</div>
+				</div>
+			))}
+		</div>
+
+		<h2 style="color:var(--accent);margin-bottom:0.5em;font-size:1.1em;">🪟 Windows 漏洞</h2>
+		<div class="vul-grid">
+			{systemVulns.filter(v=>v.name.includes("BlueKeep")||v.name.includes("Windows")||v.name.includes("SMBGhost")||v.name.includes("SMBleed")||v.name.includes("SigRed")||v.name.includes("Bad Neighbor")||v.name.includes("Print")||v.name.includes("Win32k")||v.name.includes("Exchange")).map(v => (
+				<div class="vul-card">
+					<div class="vul-card-header">
+						<div class={`sev-bar bar-${v.sev}`}></div>
+						<div class="vul-name">{v.name}</div>
+						<span class={`tag tag-${v.sev}`}>{v.sev === 'critical' ? '严重' : '高危'}</span>
+					</div>
+					<p class="vul-desc">{v.desc}</p>
+					<div class="vul-tags">{v.tags.map(t => <span class="tag tag-info">{t}</span>)}</div>
+				</div>
+			))}
+		</div>
+	</main>
+	<Footer />
+</body>
+</html>

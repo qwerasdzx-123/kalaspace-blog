@@ -1,0 +1,134 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<BaseHead title="漏洞库 - " + SITE_TITLE} description="网络安全漏洞情报库，CVE/POC/EXP漏洞详情" />
+	<style>
+		.hero { padding: 3em 0 2em; border-bottom: 1px solid var(--border-color); margin-bottom: 2em; }
+		.hero h1 { color: var(--accent); font-size: 2.2em; margin-bottom: 0.5em; }
+		.hero p { color: rgb(var(--gray)); max-width: 700px; }
+		.count-badge { display: inline-block; padding: 2px 12px; border-radius: 20px; background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.3); color: var(--accent); font-size: 0.85em; margin-bottom: 1em; }
+		.category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1em; margin-bottom: 3em; }
+		.cat-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5em; text-decoration: none; transition: all 0.2s; display: block; }
+		.cat-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,170,0.1); }
+		.cat-icon { font-size: 2em; margin-bottom: 0.5em; }
+		.cat-title { font-weight: 700; font-size: 1.1em; color: rgb(var(--black)); margin-bottom: 0.3em; }
+		.cat-desc { font-size: 0.82em; color: rgb(var(--gray)); margin: 0; }
+		.cat-count { margin-top: 0.6em; font-size: 0.78em; color: var(--accent); font-weight: 600; }
+		.vul-list { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; margin-bottom: 2em; }
+		.vul-item { padding: 1em 1.5em; border-bottom: 1px solid var(--border-color); display: flex; align-items: flex-start; gap: 1em; flex-wrap: wrap; }
+		.vul-item:last-child { border-bottom: none; }
+		.vul-item:hover { background: rgba(0,212,170,0.03); }
+		.severity { flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; margin-top: 8px; }
+		.sev-critical { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
+		.sev-high { background: #ffa502; box-shadow: 0 0 8px #ffa502; }
+		.sev-medium { background: var(--accent-yellow); }
+		.sev-low { background: var(--accent); }
+		.vul-main { flex: 1; min-width: 200px; }
+		.vul-name { font-weight: 700; font-size: 0.95em; color: rgb(var(--black)); text-decoration: none; }
+		.vul-name:hover { color: var(--accent); }
+		.vul-desc { font-size: 0.82em; color: rgb(var(--gray)); margin-top: 0.2em; }
+		.vul-meta { display: flex; gap: 0.5em; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
+	</style>
+</head>
+<body>
+	<Header />
+	<main>
+		<div class="hero">
+			<span class="count-badge">🔴 300+ 漏洞记录</span>
+			<h1>🛡️ 漏洞情报库</h1>
+			<p>收录国内外主流 CMS、框架、中间件、系统、网络设备等漏洞情报，包含 CVE 编号、影响版本、POC/EXP 及修复建议。</p>
+		</div>
+
+		<h2 style="color:var(--accent);margin-bottom:1em;font-size:1.2em;">📂 按分类浏览</h2>
+		<div class="category-grid">
+			<a href="/vul/cms" class="cat-card">
+				<div class="cat-icon">🏠</div>
+				<div class="cat-title">CMS 漏洞</div>
+				<div class="cat-desc">DedeCMS · WordPress · Discuz · PHPCMS · 泛微 · 致远 · 禅道</div>
+				<div class="cat-count">50+ 款系统 · 200+ 漏洞</div>
+			</a>
+			<a href="/vul/editor" class="cat-card">
+				<div class="cat-icon">📝</div>
+				<div class="cat-title">编辑器漏洞</div>
+				<div class="cat-desc">KindEditor · Ueditor · FCKeditor · EWebEditor · CKEditor</div>
+				<div class="cat-count">10+ 款编辑器 · 40+ 漏洞</div>
+			</a>
+			<a href="/vul/middleware" class="cat-card">
+				<div class="cat-icon">⚙️</div>
+				<div class="cat-title">中间件/框架漏洞</div>
+				<div class="cat-desc">Weblogic · Struts2 · Shiro · Tomcat · Apache · Nginx · Spring</div>
+				<div class="cat-count">15+ 款中间件 · 80+ 漏洞</div>
+			</a>
+			<a href="/vul/product" class="cat-card">
+				<div class="cat-icon">🛠️</div>
+				<div class="cat-title">产品/工具漏洞</div>
+				<div class="cat-desc">phpMyAdmin · Jenkins · GitLab · Redis · Jira · Kibana · Nexus</div>
+				<div class="cat-count">30+ 款产品 · 60+ 漏洞</div>
+			</a>
+			<a href="/vul/system" class="cat-card">
+				<div class="cat-icon">💻</div>
+				<div class="cat-title">系统漏洞</div>
+				<div class="cat-desc">Windows · Linux · macOS · BlueKeep · SMB · DNS</div>
+				<div class="cat-count">20+ 系统漏洞</div>
+			</a>
+			<a href="/vul/iot" class="cat-card">
+				<div class="cat-icon">📡</div>
+				<div class="cat-title">IoT/网络设备</div>
+				<div class="cat-desc">路由器 · 摄像头 · VPN · SSL · 海康威视 · 深信服 · F5</div>
+				<div class="cat-count">20+ 款设备 · 50+ 漏洞</div>
+			</a>
+		</div>
+
+		<h2 style="color:var(--accent);margin-bottom:1em;font-size:1.2em;">🚨 高危漏洞 TOP 20</h2>
+		<div class="vul-list">
+			{[
+				{sev:"critical",cve:"CVE-2019-0708",name:"BlueKeep RDP远程代码执行",desc:"Windows RDP服务RCE，影响Win7/Server2008",tag:"RCE",sys:"Windows"},
+				{sev:"critical",cve:"CVE-2020-1350",name:"SigRed DNS Server蠕虫级RCE",desc:"Windows DNS Server蠕虫漏洞，可横向传播",tag:"RCE",sys:"DNS"},
+				{sev:"critical",cve:"CVE-2020-14882",name:"Weblogic未授权JNDI注入RCE",desc:"Weblogic控制台JNDI注入，无需认证",tag:"JNDI",sys:"Weblogic"},
+				{sev:"critical",cve:"CVE-2018-2628",name:"Weblogic T3反序列化RCE",desc:"T3协议反序列化，全版本通杀",tag:"反序列化",sys:"Weblogic"},
+				{sev:"critical",cve:"S2-045",name:"Struts2 S2-045远程代码执行",desc:"Jakarta Multipart解析器OGNL注入",tag:"OGNL",sys:"Struts2"},
+				{sev:"critical",cve:"CVE-2020-2555",name:"ThinkPHP 5.x全版本RCE",desc:"5.0-5.0.23/5.1-5.1.31通杀",tag:"RCE",sys:"ThinkPHP"},
+				{sev:"critical",cve:"CVE-2021-26855",name:"Exchange ProxyLogon RCE",desc:"SSRF+反序列化，绕过认证RCE",tag:"RCE",sys:"Exchange"},
+				{sev:"critical",cve:"CVE-2017-10271",name:"Weblogic XMLDecoder反序列化",desc:"SOAP请求触发代码执行",tag:"反序列化",sys:"Weblogic"},
+				{sev:"critical",cve:"CVE-2019-16759",name:"vBulletin 5.x 0day Pre-Auth RCE",desc:"无需认证即可RCE",tag:"RCE",sys:"vBulletin"},
+				{sev:"high",cve:"CVE-2020-0688",name:"Exchange远程代码执行",desc:"固定密钥导致的反序列化RCE",tag:"RCE",sys:"Exchange"},
+				{sev:"high",cve:"CVE-2018-2893",name:"Weblogic任意文件上传",desc:"Weblogic测试页面上传webshell",tag:"Getshell",sys:"Weblogic"},
+				{sev:"high",cve:"CVE-2019-7238",name:"Nexus Repository RCE",desc:"Nexus 3.x JNDI注入RCE",tag:"RCE",sys:"Nexus"},
+				{sev:"high",cve:"CVE-2019-15107",name:"Webmin RCE (<=1.920)",desc:"口令更改处命令注入",tag:"命令注入",sys:"Webmin"},
+				{sev:"high",cve:"CVE-2020-5398",name:"Spring MVC RFD攻击",desc:"Spring反射文件下载攻击",tag:"RFD",sys:"Spring"},
+				{sev:"high",cve:"CVE-2020-10199",name:"Nexus OSS命令执行",desc:"Groovy脚本注入",tag:"命令注入",sys:"Nexus"},
+				{sev:"high",cve:"CVE-2019-1003000",name:"Jenkins RCE",desc:"Sandbox绕过导致Groovy RCE",tag:"RCE",sys:"Jenkins"},
+				{sev:"high",cve:"CVE-2020-13922",name:"Apache DolphinScheduler RCE",desc:"未授权API导致RCE",tag:"RCE",sys:"DolphinScheduler"},
+				{sev:"high",cve:"CVE-2020-5902",name:"F5 BIG-IP TMUI RCE",desc:"流量管理用户界面远程代码执行",tag:"RCE",sys:"F5"},
+				{sev:"high",cve:"CVE-2020-8203",name:"JumpServer未授权RCE",desc:"JWT伪造导致RCE",tag:"RCE",sys:"JumpServer"},
+				{sev:"high",cve:"CVE-2020-11651",name:"SaltStack认证绕过",desc:"ClearFuncs命令执行",tag:"命令注入",sys:"SaltStack"},
+			].map(v => (
+				<div class="vul-item">
+					<div class={`severity sev-${v.sev}`}></div>
+					<div class="vul-main">
+						<a href="/vul/middleware" class="vul-name">
+							{v.name}
+							<span class="cve" style="margin-left:0.5em;font-size:0.8em;">{v.cve}</span>
+						</a>
+						<div class="vul-desc">{v.desc}</div>
+					</div>
+					<div class="vul-meta">
+						<span class={`tag tag-${v.sev}`}>{v.sev === 'critical' ? '严重' : '高危'}</span>
+						<span class="tag tag-info">{v.tag}</span>
+						<span class="tag tag-info">{v.sys}</span>
+					</div>
+				</div>
+			))}
+		</div>
+
+	</main>
+	<Footer />
+</body>
+</html>

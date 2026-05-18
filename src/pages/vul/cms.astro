@@ -1,0 +1,157 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE_TITLE } from '../../consts';
+const cmsVulns = [
+	// ThinkPHP - 最高危
+	{name:"ThinkPHP 5.x RCE (CVE-2020-2555)",sev:"critical",desc:"5.0.0-5.0.23/5.1.0-5.1.31全版本通杀，无需认证直接RCE",tags:["RCE","全版本","无需认证"]},
+	{name:"ThinkPHP 5.0.x RCE (CVE-2019-9082)",sev:"critical",desc:"ThinkPHP 5.0.10缓存函数设计缺陷导致RCE",tags:["RCE","缓存漏洞"]},
+	{name:"ThinkPHP 2.x RCE",sev:"high",desc:"ThinkPHP 2.x版本远程代码执行漏洞，核心路由处理缺陷",tags:["RCE","路由缺陷"]},
+	{name:"ThinkPHP 5.x 任意文件读取",sev:"high",desc:"5.1.x版本文件包含漏洞，可读取系统敏感文件",tags:["文件读取","文件包含"]},
+	{name:"ThinkPHP 3.2.3 RCE",sev:"high",desc:"缓存机制缺陷导致Getshell",tags:["RCE","缓存"]},
+	{name:"ThinkCMF 5.x RCE",sev:"critical",desc:"ThinkCMF 5.0.190111后台任意文件写入导致代码执行",tags:["RCE","后台Getshell"]},
+	// DedeCMS
+	{name:"DedeCMS V5.7 SP2后台代码执行 (CVE-2018-7700)",sev:"high",desc:"通过模板标签绕过disable_functions执行代码",tags:["RCE","后台","模板注入"]},
+	{name:"DedeCMS 任意用户登录 (SSV-97087)",sev:"medium",desc:"前台用户认证缺陷，可绕过登录",tags:["认证绕过","任意登录"]},
+	{name:"DedeCMS 任意文件上传 (CVE-2018-20129)",sev:"high",desc:"上传接口未校验文件类型，上传webshell",tags:["文件上传","Getshell"]},
+	{name:"DedeCMS V5.7前台任意用户密码修改",sev:"medium",desc:"密码重置逻辑缺陷，可修改任意用户密码",tags:["密码修改","越权"]},
+	{name:"DedeCMS swf文件反射型XSS",sev:"low",desc:"swf文件存在反射型跨站脚本漏洞",tags:["XSS"]},
+	{name:"DedeCMS carbuyaction存储型XSS",sev:"medium",desc:"商城模块存储型XSS，可窃取用户cookie",tags:["存储型XSS"]},
+	// Discuz
+	{name:"Discuz! 1.5-2.5 命令执行",sev:"critical",desc:"SSRF+反序列化组合拳，可直接RCE",tags:["RCE","SSRF"]},
+	{name:"Discuz X3.4 越权登录",sev:"high",desc:"算法缺陷导致任意用户登录",tags:["越权","认证绕过"]},
+	{name:"Discuz ml.php RCE",sev:"critical",desc:"ML字段注入导致RCE",tags:["RCE","ML注入"]},
+	{name:"Discuz <3.4 birthprovince 前台任意文件删除",sev:"medium",desc:"birthprovince参数未过滤导致文件删除",tags:["文件删除","越权"]},
+	// WordPress
+	{name:"WordPress File-manager任意文件上传",sev:"high",desc:"file-manager插件任意文件上传Getshell",tags:["文件上传","插件漏洞"]},
+	{name:"WordPress 4.9.6 任意文件删除",sev:"medium",desc:"JPEG处理缺陷可删除任意文件",tags:["文件删除"]},
+	{name:"WordPress wpDiscuz任意文件上传",sev:"high",desc:"wpDiscuz评论插件文件上传绕过",tags:["文件上传","插件"]},
+	{name:"WordPress 4.7.0-4.7.1 未授权内容注入",sev:"medium",desc:"REST API未授权访问导致内容注入",tags:["未授权","内容注入"]},
+	{name:"WordPress 4.7 Info Disclosure",sev:"low",desc:"REST API泄露已发布文章内容",tags:["信息泄露"]},
+	{name:"WordPress SSRF (CVE-2018-6389)",sev:"medium",desc:"服务端请求伪造，可内网探测",tags:["SSRF"]},
+	// PHPCMS
+	{name:"PHPCMS v9.6.0 SQL注入",sev:"high",desc:"会员头像上传点SQL注入",tags:["SQL注入"]},
+	{name:"PHPCMS v9.6.0 任意文件上传",sev:"high",desc:"uploadfile参数绕过限制上传webshell",tags:["文件上传","Getshell"]},
+	{name:"PHPCMS v9.6.1 任意文件下载",sev:"medium",desc:"down.php文件下载未校验路径",tags:["任意文件读取"]},
+	{name:"PHPCMS v9.6.2 任意文件下载",sev:"medium",desc:"down.php模块任意文件读取",tags:["任意文件读取"]},
+	// Ecshop
+	{name:"ECShop 4.1.0 前台免登录SQL注入",sev:"critical",desc:"$key参数未过滤直接拼接SQL",tags:["SQL注入","免登录"]},
+	{name:"Ecshop 2.x SQL注入",sev:"high",desc:"多个接口存在SQL注入",tags:["SQL注入"]},
+	{name:"Ecshop 2.x 命令执行",sev:"critical",desc:"fetch方法导致模板注入RCE",tags:["RCE","模板注入"]},
+	// 泛微
+	{name:"泛微e-cology OA 前台SQL注入",sev:"critical",desc:"BSH脚本SQL注入，可获取数据库权限",tags:["SQL注入","前台"]},
+	{name:"泛微OA Bsh远程代码执行",sev:"critical",desc:"BshServlet未授权访问导致RCE",tags:["RCE","未授权"]},
+	{name:"泛微OA 数据库配置信息泄漏",sev:"high",desc:"数据库配置文件路径泄露",tags:["信息泄露","配置泄露"]},
+	{name:"泛微e-mobile OGNL注入",sev:"high",desc:"手机OA模块OGNL表达式注入",tags:["OGNL注入"]},
+	{name:"泛微云桥 任意文件读取",sev:"high",desc:"目录遍历漏洞读取服务器任意文件",tags:["任意文件读取","目录遍历"]},
+	// 致远
+	{name:"致远OA ajax.do未授权文件上传",sev:"critical",desc:"A8模式下webmail.do接口未授权上传",tags:["文件上传","未授权"]},
+	{name:"致远OA 任意文件下载 (CNVD-2020-62422)",sev:"high",desc:"download.do接口任意文件下载",tags:["任意文件下载"]},
+	{name:"致远OA系统多版本Getshell",sev:"critical",desc:"多个接口组合导致Getshell",tags:["Getshell","多接口"]},
+	// 禅道
+	{name:"禅道 11.6 RCE",sev:"critical",desc:"API接口未授权访问导致RCE",tags:["RCE","未授权"]},
+	{name:"禅道 11.6 任意文件读取",sev:"high",desc:"文件读取接口未校验路径",tags:["任意文件读取"]},
+	{name:"禅道 11.6 后台SQL注入",sev:"high",desc:"后台管理SQL注入",tags:["SQL注入","后台"]},
+	{name:"禅道 8.2-9.2.1 前台Getshell",sev:"critical",desc:"过滤函数缺陷导致Getshell",tags:["Getshell","前台"]},
+	// 通达OA
+	{name:"通达OA 11.6 文件删除+文件上传Getshell",sev:"critical",desc:"组合漏洞，先删除install.lock再Getshell",tags:["Getshell","组合漏洞"]},
+	{name:"通达OA 11.7 SQL注入",sev:"high",desc:"接口SQL注入可获取数据",tags:["SQL注入"]},
+	{name:"通达OA 2017 前台任意用户登录",sev:"high",desc:"算法缺陷绕过认证",tags:["任意登录","前台"]},
+	// 其他重要CMS
+	{name:"SeaCMS v6.61 远程代码执行",sev:"critical",desc:"前台RCE，无需认证",tags:["RCE","前台"]},
+	{name:"SeaCMS v6.45 前台Getshell",sev:"high",desc:"代码执行可Getshell",tags:["Getshell","前台"]},
+	{name:"Typecho反序列化漏洞",sev:"critical",desc:"反序列化POP链可RCE",tags:["反序列化","RCE"]},
+	{name:"EmpireCMS V7.5 后台Getshell",sev:"high",desc:"后台模板管理RCE",tags:["Getshell","后台"]},
+	{name:"Yii框架反序列化RCE (CVE-2020-15148)",sev:"high",desc:"CmsAction未过滤导致RCE",tags:["反序列化","RCE"]},
+	{name:"Joomla! 3.7.0 SQL注入 (CVE-2017-8917)",sev:"critical",desc:"com_fields组件SQL注入",tags:["SQL注入"]},
+	{name:"Joomla 3.4.6 远程命令执行",sev:"critical",desc:"反序列化导致RCE",tags:["RCE","反序列化"]},
+	{name:"Joomla RCE (CVE-2020-11890)",sev:"critical",desc:"无需认证直接RCE",tags:["RCE","无需认证"]},
+	{name:"MetInfo 6.1.2 XSS+SQL注入",sev:"medium",desc:"多处注入和XSS漏洞",tags:["SQL注入","XSS"]},
+	{name:"MetInfo 6.0.0 任意文件删除&读取",sev:"high",desc:"文件操作未校验路径",tags:["文件删除","文件读取"]},
+	{name:"MetInfo CMS GETSHELL漏洞合集",sev:"critical",desc:"5.X版本多个Getshell点",tags:["Getshell"]},
+	{name:"LFCMS 3.7.0 CSRF添加管理员",sev:"medium",desc:"CSRF漏洞可添加管理员账号",tags:["CSRF"]},
+	{name:"LFCMS 前台SQL注入",sev:"high",desc:"前台多处SQL注入",tags:["SQL注入","前台"]},
+	{name:"LFCMS 任意文件读取",sev:"medium",desc:"文件读取接口未校验",tags:["任意文件读取"]},
+	{name:"FineCMS v5.0.8 两处Getshell",sev:"high",desc:"前台Getshell",tags:["Getshell","前台"]},
+	{name:"YzmCMS 3.6 存储型XSS",sev:"low",desc:"存储型XSS漏洞",tags:["XSS","存储型"]},
+	{name:"Z Blog 1.5.1 XSS",sev:"low",desc:"评论模块XSS",tags:["XSS"]},
+	{name:"ZZCMS 2019.10 SQL注入",sev:"high",desc:"前台SQL注入",tags:["SQL注入"]},
+	{name:"DuomiCMS 3.0 前台代码执行",sev:"high",desc:"前台代码执行Getshell",tags:["Getshell","前台"]},
+	{name:"KCMS 5.0 前台SQL注入",sev:"high",desc:"前台SQL注入",tags:["SQL注入","前台"]},
+	{name:"Yii2反序列化RCE",sev:"critical",desc:"Yii2框架反序列化POP链RCE",tags:["反序列化","RCE"]},
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+	<BaseHead title="CMS漏洞库 - " + SITE_TITLE} description="CMS内容管理系统漏洞情报，DedeCMS/WordPress/Discuz/PHPCMS/ThinkPHP等漏洞详情" />
+	<style>
+		.hero { padding: 3em 0 2em; border-bottom: 1px solid var(--border-color); margin-bottom: 2em; }
+		.hero h1 { color: var(--accent); font-size: 2em; margin-bottom: 0.5em; }
+		.hero p { color: rgb(var(--gray)); max-width: 700px; }
+		.count-badge { display: inline-block; padding: 2px 12px; border-radius: 20px; background: rgba(0,212,170,0.1); border: 1px solid rgba(0,212,170,0.3); color: var(--accent); font-size: 0.85em; margin-bottom: 1em; }
+		.filter-bar { margin-bottom: 1.5em; display: flex; gap: 0.5em; flex-wrap: wrap; }
+		.filter-btn { padding: 4px 14px; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border-color); color: rgb(var(--gray)); font-size: 0.82em; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+		.filter-btn:hover, .filter-btn.active { background: rgba(0,212,170,0.1); border-color: var(--accent); color: var(--accent); }
+		.vul-table { width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+		.vul-table th { background: rgba(0,212,170,0.08); color: var(--accent); padding: 0.9em 1.2em; text-align: left; font-size: 0.85em; border-bottom: 1px solid var(--border-color); }
+		.vul-table td { padding: 0.8em 1.2em; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 0.88em; }
+		.vul-table tr:last-child td { border-bottom: none; }
+		.vul-table tr:hover td { background: rgba(0,212,170,0.03); }
+		.vul-name { font-weight: 600; color: rgb(var(--black)); }
+		.sev-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
+		.vul-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+	</style>
+</head>
+<body>
+	<Header />
+	<main>
+		<div class="hero">
+			<span class="count-badge">🏠 CMS漏洞 · 50+ 款系统</span>
+			<h1>CMS 漏洞库</h1>
+			<p>收录国内外主流 CMS 内容管理系统漏洞，包括 DedeCMS、WordPress、Discuz、PHPCMS、ThinkPHP、泛微、致远、禅道、通达等。</p>
+		</div>
+
+		<h2 style="color:var(--accent);margin-bottom:0.5em;font-size:1.1em;">🔥 ThinkPHP 漏洞专题</h2>
+		<table class="vul-table" style="margin-bottom:2em;">
+			<thead><tr><th>漏洞名称</th><th>影响版本</th><th>严重程度</th><th>漏洞类型</th></tr></thead>
+			<tbody>
+				<tr><td><span class="vul-name">ThinkPHP 5.x 全版本RCE (CVE-2020-2555)</span></td><td>5.0.0-5.0.23 / 5.1.0-5.1.31</td><td><span class="tag tag-critical">严重</span></td><td><span class="tag tag-info">RCE</span></td></tr>
+				<tr><td><span class="vul-name">ThinkPHP 5.0.x 缓存RCE</span></td><td>5.0.10</td><td><span class="tag tag-critical">严重</span></td><td><span class="tag tag-info">缓存漏洞</span></td></tr>
+				<tr><td><span class="vul-name">ThinkPHP 2.x RCE</span></td><td>2.x</td><td><span class="tag tag-high">高危</span></td><td><span class="tag tag-info">RCE</span></td></tr>
+				<tr><td><span class="vul-name">ThinkTP 5.x 任意文件读取</span></td><td>5.1.x</td><td><span class="tag tag-high">高危</span></td><td><span class="tag tag-info">文件读取</span></td></tr>
+				<tr><td><span class="vul-name">ThinkCMF 5.x 后台RCE</span></td><td>5.0.190111</td><td><span class="tag tag-critical">严重</span></td><td><span class="tag tag-info">RCE</span></td></tr>
+			</tbody>
+		</table>
+
+		<h2 style="color:var(--accent);margin-bottom:0.5em;font-size:1.1em;">🏠 全部 CMS 漏洞</h2>
+		<div class="filter-bar">
+			<a href="/vul/cms" class="filter-btn active">全部</a>
+			<a href="/vul/cms" class="filter-btn">DedeCMS</a>
+			<a href="/vul/cms" class="filter-btn">WordPress</a>
+			<a href="/vul/cms" class="filter-btn">Discuz</a>
+			<a href="/vul/cms" class="filter-btn">PHPCMS</a>
+			<a href="/vul/cms" class="filter-btn">泛微/致远</a>
+			<a href="/vul/cms" class="filter-btn">禅道</a>
+			<a href="/vul/cms" class="filter-btn">Ecshop</a>
+			<a href="/vul/cms" class="filter-btn">通达OA</a>
+		</div>
+		<table class="vul-table">
+			<thead><tr><th style="width:40px">级别</th><th>漏洞名称</th><th>描述</th><th>漏洞标签</th></tr></thead>
+			<tbody>
+				{cmsVulns.map(v => (
+					<tr>
+						<td><span class={`sev-dot sev-${v.sev}`}></span></td>
+						<td><span class="vul-name">{v.name}</span></td>
+						<td style="color:rgb(var(--gray));max-width:400px;">{v.desc}</td>
+						<td><div class="vul-tags">{v.tags.map(t => <span class="tag tag-info">{t}</span>)}</div></td>
+					</tr>
+				))}
+			</tbody>
+		</table>
+	</main>
+	<Footer />
+</body>
+</html>
